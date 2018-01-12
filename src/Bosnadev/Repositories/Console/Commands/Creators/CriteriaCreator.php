@@ -144,7 +144,7 @@ class CriteriaCreator {
         $criteria =  $this->getCriteria();
 
         // Model
-        $model    = $this->pluralizeModel();
+        $model    = $this->getModel();
 
         // Criteria namespace.
         $criteria_namespace = Config::get('repositories.criteria_namespace');
@@ -156,7 +156,7 @@ class CriteriaCreator {
         if(isset($model) && !empty($model))
         {
             // Update the criteria namespace with the model folder.
-            $criteria_namespace .= '\\' . $model;
+            $criteria_namespace .= '\\' . $this->pluralizeModel();
         }
 
         // Populate data.
