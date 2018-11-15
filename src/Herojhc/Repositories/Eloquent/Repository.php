@@ -13,10 +13,10 @@ use Herojhc\Repositories\Contracts\RepositoryInterface;
 use Herojhc\Repositories\Exceptions\RepositoryException;
 
 /**
- * Class BaseRepository
+ * Class Repository
  * @package Herojhc\Repositories\Eloquent
  */
-abstract class BaseRepository implements RepositoryInterface, CriteriaInterface
+abstract class Repository implements RepositoryInterface, CriteriaInterface
 {
 
     /**
