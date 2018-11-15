@@ -1,7 +1,9 @@
-<?php namespace criteria_namespace;
+<?php
 
-use Bosnadev\Repositories\Criteria\Criteria;
-use Bosnadev\Repositories\Contracts\RepositoryInterface as Repository;
+namespace criteria_namespace;
+
+use Herojhc\Repositories\Criteria\Criteria;
+use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
 
 /**
  * Class criteria_class

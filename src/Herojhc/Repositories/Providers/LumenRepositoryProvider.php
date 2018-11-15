@@ -1,21 +1,23 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: JHC
+ * Date: 2017-12-14
+ * Time: 12:48
+ */
 
-namespace Bosnadev\Repositories\Providers;
+namespace Herojhc\Repositories\Providers;
 
 use Illuminate\Support\Composer;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
-use Bosnadev\Repositories\Console\Commands\MakeCriteriaCommand;
-use Bosnadev\Repositories\Console\Commands\MakeRepositoryCommand;
-use Bosnadev\Repositories\Console\Commands\Creators\CriteriaCreator;
-use Bosnadev\Repositories\Console\Commands\Creators\RepositoryCreator;
+use Herojhc\Repositories\Console\Commands\MakeCriteriaCommand;
+use Herojhc\Repositories\Console\Commands\MakeRepositoryCommand;
+use Herojhc\Repositories\Console\Commands\Creators\CriteriaCreator;
+use Herojhc\Repositories\Console\Commands\Creators\RepositoryCreator;
 
-/**
- * Class RepositoryProvider
- *
- * @package Bosnadev\Repositories\Providers
- */
-class RepositoryProvider extends ServiceProvider
+
+class LumenRepositoryProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -32,14 +34,7 @@ class RepositoryProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Config path.
-        $config_path = __DIR__ . '/../../../../config/repositories.php';
-
-        // Publish config.
-        $this->publishes(
-            [$config_path => config_path('repositories.php')],
-            'repositories'
-        );
+        $this->app->configure('repositories');
     }
 
     /**

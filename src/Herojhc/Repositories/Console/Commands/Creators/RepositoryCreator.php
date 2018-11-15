@@ -1,6 +1,6 @@
 <?php
 
-namespace Bosnadev\Repositories\Console\Commands\Creators;
+namespace Herojhc\Repositories\Console\Commands\Creators;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
@@ -9,9 +9,10 @@ use Doctrine\Common\Inflector\Inflector;
 /**
  * Class RepositoryCreator
  *
- * @package Bosnadev\Repositories\Console\Commands\Creators
+ * @package Herojhc\Repositories\Console\Commands\Creators
  */
-class RepositoryCreator {
+class RepositoryCreator
+{
 
     /**
      * @var Filesystem
@@ -69,11 +70,12 @@ class RepositoryCreator {
     }
 
     /**
-     * Create the repository.
+     *
      *
      * @param $repository
      * @param $model
      * @return int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function create($repository, $model)
     {
@@ -96,8 +98,7 @@ class RepositoryCreator {
         $directory = $this->getDirectory();
 
         // Check if the directory exists.
-        if(!$this->files->isDirectory($directory))
-        {
+        if (!$this->files->isDirectory($directory)) {
             // Create the directory if not.
             $this->files->makeDirectory($directory, 0755, true);
         }
@@ -128,8 +129,7 @@ class RepositoryCreator {
         $repository_name = $this->getRepository();
 
         // Check if the repository ends with 'Repository'.
-        if(!strpos($repository_name, 'Repository') !== false)
-        {
+        if (!strpos($repository_name, 'Repository') !== false) {
             // Append 'Repository' if not.
             $repository_name .= 'Repository';
         }
@@ -146,17 +146,13 @@ class RepositoryCreator {
     protected function getModelName()
     {
         // Set model.
-        $model      = $this->getModel();
+        $model = $this->getModel();
 
         // Check if the model isset.
-        if(isset($model) && !empty($model))
-        {
+        if (isset($model) && !empty($model)) {
             // Set the model name from the model option.
             $model_name = $model;
-        }
-
-        else
-        {
+        } else {
             // Set the model name by the stripped repository name.
             $model_name = Inflector::singularize($this->stripRepositoryName());
         }
@@ -176,7 +172,7 @@ class RepositoryCreator {
         $repository = strtolower($this->getRepository());
 
         // Remove repository from the string.
-        $stripped   = str_replace("repository", "", $repository);
+        $stripped = str_replace("repository", "", $repository);
 
         // Uppercase repository name.
         $result = ucfirst($stripped);
@@ -196,20 +192,20 @@ class RepositoryCreator {
         $repository_namespace = Config::get('repositories.repository_namespace');
 
         // Repository class.
-        $repository_class     = $this->getRepositoryName();
+        $repository_class = $this->getRepositoryName();
 
         // Model path.
-        $model_path           = Config::get('repositories.model_namespace');
+        $model_path = Config::get('repositories.model_namespace');
 
         // Model name.
-        $model_name           = $this->getModelName();
+        $model_name = $this->getModelName();
 
         // Populate data.
         $populate_data = [
             'repository_namespace' => $repository_namespace,
-            'repository_class'     => $repository_class,
-            'model_path'           => $model_path,
-            'model_name'           => $model_name
+            'repository_class' => $repository_class,
+            'model_path' => $model_path,
+            'model_name' => $model_name
         ];
 
         // Return populate data.
@@ -234,6 +230,7 @@ class RepositoryCreator {
      * Get the stub.
      *
      * @return string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function getStub()
     {
@@ -261,7 +258,8 @@ class RepositoryCreator {
     /**
      * Populate the stub.
      *
-     * @return mixed
+     * @return mixed|string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function populateStub()
     {
@@ -272,8 +270,7 @@ class RepositoryCreator {
         $stub = $this->getStub();
 
         // Loop through the populate data.
-        foreach ($populate_data as $key => $value)
-        {
+        foreach ($populate_data as $key => $value) {
             // Populate the stub.
             $stub = str_replace($key, $value, $stub);
         }
@@ -282,6 +279,12 @@ class RepositoryCreator {
         return $stub;
     }
 
+    /**
+     * Create the repository class.
+     *
+     * @return int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
     protected function createClass()
     {
         // Result.

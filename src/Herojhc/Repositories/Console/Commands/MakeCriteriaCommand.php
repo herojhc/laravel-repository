@@ -1,16 +1,18 @@
 <?php
 
-namespace Bosnadev\Repositories\Console\Commands;
+namespace Herojhc\Repositories\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Composer;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Bosnadev\Repositories\Console\Commands\Creators\CriteriaCreator;
+use Herojhc\Repositories\Console\Commands\Creators\CriteriaCreator;
 
 /**
  * Class MakeCriteriaCommand
  *
- * @package Bosnadev\Repositories\Console\Commands
+ * @package Herojhc\Repositories\Console\Commands
  */
 class MakeCriteriaCommand extends Command
 {
@@ -40,16 +42,17 @@ class MakeCriteriaCommand extends Command
 
     /**
      * @param CriteriaCreator $creator
+     * @param Composer $composer
      */
-    public function __construct(CriteriaCreator $creator)
+    public function __construct(CriteriaCreator $creator, Composer $composer)
     {
         parent::__construct();
 
         // Set the creator.
-        $this->creator  = $creator;
+        $this->creator = $creator;
 
         // Set the composer.
-        $this->composer = app()['composer'];
+        $this->composer = $composer;
     }
 
     /**
@@ -63,7 +66,7 @@ class MakeCriteriaCommand extends Command
         $arguments = $this->argument();
 
         // Get the options.
-        $options   = $this->option();
+        $options = $this->option();
 
         // Write criteria.
         $this->writeCriteria($arguments, $options);
@@ -73,10 +76,9 @@ class MakeCriteriaCommand extends Command
     }
 
     /**
-     * Write the criteria.
-     *
      * @param $arguments
      * @param $options
+     * @return bool
      */
     public function writeCriteria($arguments, $options)
     {
@@ -84,14 +86,19 @@ class MakeCriteriaCommand extends Command
         $criteria = $arguments['criteria'];
 
         // Set model.
-        $model    = $options['model'];
+        $model = $options['model'];
 
-        // Create the criteria.
-        if($this->creator->create($criteria, $model))
-        {
-            // Information message.
-            $this->info("Succesfully created the criteria class.");
+        try {
+            // Create the criteria.
+            if ($this->creator->create($criteria, $model)) {
+                // Information message.
+                $this->info("Succesfully created the criteria class.");
+            }
+        } catch (FileNotFoundException $exception) {
+            $this->error($criteria . ' already exists!');
+            return false;
         }
+
     }
 
     /**

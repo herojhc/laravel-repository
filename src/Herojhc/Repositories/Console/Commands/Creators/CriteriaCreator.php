@@ -1,6 +1,6 @@
 <?php
 
-namespace Bosnadev\Repositories\Console\Commands\Creators;
+namespace Herojhc\Repositories\Console\Commands\Creators;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
@@ -9,9 +9,10 @@ use Doctrine\Common\Inflector\Inflector;
 /**
  * Class CriteriaCreator
  *
- * @package Bosnadev\Repositories\Console\Commands\Creators
+ * @package Herojhc\Repositories\Console\Commands\Creators
  */
-class CriteriaCreator {
+class CriteriaCreator
+{
 
     /**
      * @var Filesystem
@@ -73,8 +74,8 @@ class CriteriaCreator {
      *
      * @param $criteria
      * @param $model
-     *
      * @return int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function create($criteria, $model)
     {
@@ -101,8 +102,7 @@ class CriteriaCreator {
         $directory = $this->getDirectory();
 
         // Check if the directory exists.
-        if(!$this->files->isDirectory($directory))
-        {
+        if (!$this->files->isDirectory($directory)) {
             // Create the directory if not.
             $this->files->makeDirectory($directory, 0755, true);
         }
@@ -122,8 +122,7 @@ class CriteriaCreator {
         $directory = Config::get('repositories.criteria_path');
 
         // Check if the model is not null.
-        if(isset($model) && !empty($model))
-        {
+        if (isset($model) && !empty($model)) {
             // Update the directory with the model name.
             $directory .= DIRECTORY_SEPARATOR . $this->pluralizeModel();
         }
@@ -141,20 +140,19 @@ class CriteriaCreator {
     protected function getPopulateData()
     {
         // Criteria.
-        $criteria =  $this->getCriteria();
+        $criteria = $this->getCriteria();
 
         // Model
-        $model    = $this->getModel();
+        $model = $this->getModel();
 
         // Criteria namespace.
         $criteria_namespace = Config::get('repositories.criteria_namespace');
 
         // Criteria class.
-        $criteria_class     = $criteria;
+        $criteria_class = $criteria;
 
         // Check if the model isset and not empty.
-        if(isset($model) && !empty($model))
-        {
+        if (isset($model) && !empty($model)) {
             // Update the criteria namespace with the model folder.
             $criteria_namespace .= '\\' . $this->pluralizeModel();
         }
@@ -162,7 +160,7 @@ class CriteriaCreator {
         // Populate data.
         $populate_data = [
             'criteria_namespace' => $criteria_namespace,
-            'criteria_class'     => $criteria_class
+            'criteria_class' => $criteria_class
         ];
 
         // Return the populate data.
@@ -215,7 +213,8 @@ class CriteriaCreator {
     /**
      * Populate the stub.
      *
-     * @return mixed
+     * @return mixed|string
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function populateStub()
     {
@@ -226,8 +225,7 @@ class CriteriaCreator {
         $stub = $this->getStub();
 
         // Loop through the populate data.
-        foreach ($populate_data as $search => $replace)
-        {
+        foreach ($populate_data as $search => $replace) {
             // Populate the stub.
             $stub = str_replace($search, $replace, $stub);
         }
@@ -240,6 +238,7 @@ class CriteriaCreator {
      * Create the repository class.
      *
      * @return int
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     protected function createClass()
     {

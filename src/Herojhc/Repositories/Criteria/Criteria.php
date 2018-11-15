@@ -1,8 +1,11 @@
-<?php namespace Bosnadev\Repositories\Criteria;
+<?php
 
-use Bosnadev\Repositories\Contracts\RepositoryInterface as Repository;
+namespace Herojhc\Repositories\Criteria;
 
-abstract class Criteria {
+use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
+
+abstract class Criteria
+{
 
     /**
      * @param $model

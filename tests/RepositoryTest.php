@@ -1,6 +1,6 @@
 <?php
 
-namespace Bosnadev\Tests\Repositories;
+namespace HeroJhc\Tests\Repositories;
 
 use \Mockery as m;
 use \PHPUnit_Framework_TestCase as TestCase;

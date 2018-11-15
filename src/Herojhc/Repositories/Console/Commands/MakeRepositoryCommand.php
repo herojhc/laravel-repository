@@ -1,16 +1,18 @@
 <?php
 
-namespace Bosnadev\Repositories\Console\Commands;
+namespace Herojhc\Repositories\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Composer;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Bosnadev\Repositories\Console\Commands\Creators\RepositoryCreator;
+use Herojhc\Repositories\Console\Commands\Creators\RepositoryCreator;
 
 /**
  * Class MakeRepositoryCommand
  *
- * @package Bosnadev\Repositories\Console\Commands
+ * @package Herojhc\Repositories\Console\Commands
  */
 class MakeRepositoryCommand extends Command
 {
@@ -40,16 +42,17 @@ class MakeRepositoryCommand extends Command
 
     /**
      * @param RepositoryCreator $creator
+     * @param Composer $composer
      */
-    public function __construct(RepositoryCreator $creator)
+    public function __construct(RepositoryCreator $creator, Composer $composer)
     {
         parent::__construct();
 
         // Set the creator.
-        $this->creator  = $creator;
+        $this->creator = $creator;
 
         // Set composer.
-        $this->composer = app()['composer'];
+        $this->composer = $composer;
     }
 
     /**
@@ -63,7 +66,7 @@ class MakeRepositoryCommand extends Command
         $arguments = $this->argument();
 
         // Get the options.
-        $options   = $this->option();
+        $options = $this->option();
 
         // Write repository.
         $this->writeRepository($arguments, $options);
@@ -75,6 +78,7 @@ class MakeRepositoryCommand extends Command
     /**
      * @param $arguments
      * @param $options
+     * @return bool
      */
     protected function writeRepository($arguments, $options)
     {
@@ -82,14 +86,19 @@ class MakeRepositoryCommand extends Command
         $repository = $arguments['repository'];
 
         // Set model.
-        $model      = $options['model'];
+        $model = $options['model'];
 
-        // Create the repository.
-        if($this->creator->create($repository, $model))
-        {
-            // Information message.
-            $this->info("Successfully created the repository class");
+        try {
+            // Create the repository.
+            if ($this->creator->create($repository, $model)) {
+                // Information message.
+                $this->info("Successfully created the repository class");
+            }
+        } catch (FileNotFoundException $exception) {
+            $this->error($repository . ' already exists!');
+            return false;
         }
+
     }
 
     /**
