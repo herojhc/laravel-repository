@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Herojhc\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class RequestCriteria
@@ -24,22 +25,21 @@ class Search extends Criteria
     /**
      * Apply criteria in query repository
      *
-     * @param         Builder|Model $model
+     * @param Builder|Model $model
      * @param RepositoryInterface $repository
      *
      * @return mixed
-     * @throws \Exception
      */
     public function apply($model, RepositoryInterface $repository)
     {
         $fieldsSearchable = $repository->getFieldsSearchable();
-        $search = Input::get(config('repositories.criteria.params.search', 'search'), null);
-        $searchFields = Input::get(config('repositories.criteria.params.searchFields', 'searchFields'), null);
-        $filter = Input::get(config('repositories.criteria.params.filter', 'filter'), null);
-        $orderBy = Input::get(config('repositories.criteria.params.orderBy', 'orderBy'), null);
-        $sortedBy = Input::get(config('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc');
-        $with = Input::get(config('repositories.criteria.params.with', 'with'), null);
-        $searchJoin = Input::get(config('repositories.criteria.params.searchJoin', 'searchJoin'), null);
+        $search = Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
+        $searchFields = Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null);
+        $filter = Input::get(Config::get('repositories.criteria.params.filter', 'filter'), null);
+        $orderBy = Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), null);
+        $sortedBy = Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc');
+        $with = Input::get(Config::get('repositories.criteria.params.with', 'with'), null);
+        $searchJoin = Input::get(Config::get('repositories.criteria.params.searchJoin', 'searchJoin'), null);
         $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc') ? 'asc' : 'desc';
         if ($search && is_array($fieldsSearchable) && count($fieldsSearchable)) {
             $searchFields = is_array($searchFields) || is_null($searchFields) ? $searchFields : explode(';', $searchFields);
@@ -190,7 +190,7 @@ class Search extends Criteria
     protected function parserFieldsSearch(array $fields = [], array $searchFields = null)
     {
         if (!is_null($searchFields) && count($searchFields)) {
-            $acceptedConditions = config('repositories.criteria.acceptedConditions', [
+            $acceptedConditions = Config::get('repositories.criteria.acceptedConditions', [
                 '=',
                 'like'
             ]);
