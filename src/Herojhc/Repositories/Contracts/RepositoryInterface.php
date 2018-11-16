@@ -62,22 +62,22 @@ interface RepositoryInterface
     /**
      * Retrieve all data of repository, paginated
      *
-     * @param null $limit
+     * @param int $limit
      * @param array $columns
      *
      * @return mixed
      */
-    public function paginate($limit = null, $columns = ['*']);
+    public function paginate($limit = 20, $columns = ['*']);
 
     /**
      * Retrieve all data of repository, simple paginated
      *
-     * @param null $limit
+     * @param int $limit
      * @param array $columns
      *
      * @return mixed
      */
-    public function simplePaginate($limit = null, $columns = ['*']);
+    public function simplePaginate($limit = 20, $columns = ['*']);
 
     /**
      * Find data by id

@@ -300,12 +300,12 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
     /**
      * Retrieve all data of repository, simple paginated
      *
-     * @param null $limit
+     * @param int $limit
      * @param array $columns
      * @return mixed
      *
      */
-    public function simplePaginate($limit = null, $columns = ['*'])
+    public function simplePaginate($limit = 20, $columns = ['*'])
     {
         return $this->paginate($limit, $columns, "simplePaginate");
     }
@@ -611,8 +611,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * Push Criteria for filter the query
      *
      * @param $criteria
-     * @return $this|Criteria
-     *
+     * @return $this
      */
     public function pushCriteria($criteria)
     {
@@ -746,7 +745,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
 
         if ($criteria) {
             foreach ($criteria as $c) {
-                if ($c instanceof CriteriaInterface) {
+                if ($c instanceof Criteria) {
                     $this->model = $c->apply($this->model, $this);
                 }
             }
