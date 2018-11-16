@@ -54,7 +54,6 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
     /**
      * BaseRepository constructor.
      * @param Application $app
-     * @throws RepositoryException
      */
     public function __construct(Application $app)
     {
@@ -73,7 +72,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
     }
 
     /**
-     * @throws RepositoryException
+     * @return Model
      */
     public function resetModel()
     {
@@ -90,7 +89,6 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
 
     /**
      * @return Model
-     * @throws RepositoryException
      */
     public function makeModel()
     {
@@ -166,7 +164,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param $attributes
      * @param bool $detaching
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function sync($id, $relation, $attributes, $detaching = true)
     {
@@ -180,7 +178,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param $relation
      * @param $attributes
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function syncWithoutDetaching($id, $relation, $attributes)
     {
@@ -192,7 +190,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function all($columns = ['*'])
     {
@@ -216,7 +214,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function get($columns = ['*'])
     {
@@ -229,7 +227,6 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
      */
     public function first($columns = ['*'])
     {
@@ -248,7 +245,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $attributes
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function firstOrNew(array $attributes = [])
     {
@@ -267,7 +264,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $attributes
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function firstOrCreate(array $attributes = [])
     {
@@ -288,7 +285,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $columns
      * @param string $method
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function paginate($limit = 20, $columns = ['*'], $method = "paginate")
     {
@@ -306,7 +303,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param null $limit
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function simplePaginate($limit = null, $columns = ['*'])
     {
@@ -319,7 +316,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param $id
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function find($id, $columns = ['*'])
     {
@@ -338,7 +335,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param null $value
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function findBy($field, $value = null, $columns = ['*'])
     {
@@ -356,7 +353,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $where
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function findWhere(array $where, $columns = ['*'])
     {
@@ -378,7 +375,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $values
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function findWhereIn($field, array $values, $columns = ['*'])
     {
@@ -397,7 +394,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $values
      * @param array $columns
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function findWhereNotIn($field, array $values, $columns = ['*'])
     {
@@ -414,7 +411,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $attributes
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function create(array $attributes)
     {
@@ -431,7 +428,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $attributes
      * @param $id
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function update(array $attributes, $id)
     {
@@ -452,7 +449,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * @param array $attributes
      * @param array $values
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -470,7 +467,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param $id
      * @return int|mixed
-     * @throws RepositoryException
+     *
      */
     public function delete($id)
     {
@@ -490,7 +487,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param $ids
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function batchDelete($ids)
     {
@@ -505,7 +502,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param array $where
      * @return bool|null
-     * @throws RepositoryException
+     *
      */
     public function deleteWhere(array $where)
     {
@@ -615,7 +612,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param $criteria
      * @return $this|Criteria
-     * @throws RepositoryException
+     *
      */
     public function pushCriteria($criteria)
     {
@@ -669,7 +666,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      *
      * @param Criteria $criteria
      * @return mixed
-     * @throws RepositoryException
+     *
      */
     public function getByCriteria(Criteria $criteria)
     {
