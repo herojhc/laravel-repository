@@ -65,14 +65,19 @@ class Search extends Criteria
                             $value = ($condition == "like" || $condition == "ilike") ? "%{$search}%" : $search;
                         }
                     }
+                    $modelTableName = $query->getModel()->getTable();
+
+                    // 模型关联
                     $relation = null;
-                    if (stripos($field, '.')) {
+                    if (stripos($field, '|')) {
                         $explode = explode('.', $field);
                         // 删除数组的最后一个值并返回删除的值
                         $field = array_pop($explode);
                         $relation = implode('.', $explode);
+                    } elseif (!stripos($field, '.')) {
+                        $field = $modelTableName . '.' . $field;
                     }
-                    $modelTableName = $query->getModel()->getTable();
+
                     if ($isFirstField || $modelForceAndWhere) {
                         if (!is_null($value)) {
                             if (!is_null($relation)) {
@@ -80,8 +85,9 @@ class Search extends Criteria
                                     $query->where($field, $condition, $value);
                                 });
                             } else {
-                                $query->where($modelTableName . '.' . $field, $condition, $value);
+                                $query->where($field, $condition, $value);
                             }
+
                             $isFirstField = false;
                         }
                     } else {
@@ -91,7 +97,7 @@ class Search extends Criteria
                                     $query->where($field, $condition, $value);
                                 });
                             } else {
-                                $query->orWhere($modelTableName . '.' . $field, $condition, $value);
+                                $query->orWhere($field, $condition, $value);
                             }
                         }
                     }
@@ -106,21 +112,14 @@ class Search extends Criteria
             foreach ($multipleSorts as $sort) {
                 $split = explode('|', $sort);
                 $sortColumn = $split[0];
-                $relation = null;
-                if (stripos($sortColumn, '.')) {
-                    $explode = explode('.', $sortColumn);
-                    $sortColumn = array_pop($explode);
-                    $relation = implode('.', $explode);
+                if (!stripos($sortColumn, '.')) {
+                    $sortColumn = $table . '.' . $sortColumn;
                 }
                 $sortDirection = $sortedBy;
                 if (count($split) == 2) {
                     $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
                 }
-                if (!is_null($relation)) {
-                    $model = $model->orderBy($relation . '.' . $sortColumn, $sortDirection);
-                } else {
-                    $model = $model->orderBy($table . '.' . $sortColumn, $sortDirection);
-                }
+                $model = $model->orderBy($sortColumn, $sortDirection);
             }
         }
         if (isset($filter) && !empty($filter)) {
