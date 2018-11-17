@@ -9,6 +9,7 @@
 namespace Herojhc\Repositories\Criteria;
 
 
+use Herojhc\Repositories\Exceptions\RepositoryException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Herojhc\Repositories\Contracts\RepositoryInterface;
@@ -67,6 +68,7 @@ class Search extends Criteria
                     $relation = null;
                     if (stripos($field, '.')) {
                         $explode = explode('.', $field);
+                        // 删除数组的最后一个值并返回删除的值
                         $field = array_pop($explode);
                         $relation = implode('.', $explode);
                     }
@@ -97,39 +99,44 @@ class Search extends Criteria
             });
         }
         if (isset($orderBy) && !empty($orderBy)) {
-            $split = explode('|', $orderBy);
-            if (count($split) > 1) {
-                /*
-                 * ex.
-                 * products|description -> join products on current_table.product_id = products.id order by description
-                 *
-                 * products:custom_id|products.description -> join products on current_table.custom_id = products.id order
-                 * by products.description (in case both tables have same column name)
-                 */
-                $table = $model->getModel()->getTable();
-                $sortTable = $split[0];
-                $sortColumn = $split[1];
-                $split = explode(':', $sortTable);
-                if (count($split) > 1) {
-                    $sortTable = $split[0];
-                    $keyName = $table . '.' . $split[1];
-                } else {
-                    /*
-                     * If you do not define which column to use as a joining column on current table, it will
-                     * use a singular of a join table appended with _id
-                     *
-                     * ex.
-                     * products -> product_id
-                     */
-                    $prefix = str_singular($sortTable);
-                    $keyName = $table . '.' . $prefix . '_id';
+            $table = $model->getModel()->getTable();
+            // 查看是否是多条件排序
+            $multiples = explode(';', $orderBy);
+            if (count($multiples) > 1) {
+                // 循环添加排序字段
+                foreach ($multiples as $sort) {
+                    $split = explode('|', $sort);
+                    $orderBy = $split[0];
+                    $relation = null;
+                    if (stripos($orderBy, '.')) {
+                        $explode = explode('.', $orderBy);
+                        $orderBy = array_pop($explode);
+                        $relation = implode('.', $explode);
+                    }
+                    $_sortBy = $sortedBy;
+                    if (count($split) == 2) {
+                        $_sortBy = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
+                    }
+                    if (!is_null($relation)) {
+                        $model = $model->orderBy($relation . $orderBy, $_sortBy);
+                    } else {
+                        $model = $model->orderBy($table . $orderBy, $_sortBy);
+                    }
                 }
-                $model = $model
-                    ->leftJoin($sortTable, $keyName, '=', $sortTable . '.id')
-                    ->orderBy($sortColumn, $sortedBy)
-                    ->addSelect($table . '.*');
             } else {
-                $model = $model->orderBy($orderBy, $sortedBy);
+
+                $relation = null;
+                if (stripos($orderBy, '.')) {
+                    $explode = explode('.', $orderBy);
+                    $orderBy = array_pop($explode);
+                    $relation = implode('.', $explode);
+                }
+                if (!is_null($relation)) {
+                    $model = $model->orderBy($relation . $orderBy, $sortedBy);
+                } else {
+                    $model = $model->orderBy($table . $orderBy, $sortedBy);
+                }
+
             }
         }
         if (isset($filter) && !empty($filter)) {
@@ -187,6 +194,11 @@ class Search extends Criteria
         return $search;
     }
 
+    /**
+     * @param array $fields
+     * @param array|null $searchFields
+     * @return array
+     */
     protected function parserFieldsSearch(array $fields = [], array $searchFields = null)
     {
         if (!is_null($searchFields) && count($searchFields)) {
@@ -194,6 +206,7 @@ class Search extends Criteria
                 '=',
                 'like'
             ]);
+            // searchAbles
             $originalFields = $fields;
             $fields = [];
             foreach ($searchFields as $index => $field) {
@@ -219,7 +232,7 @@ class Search extends Criteria
                 }
             }
             if (count($fields) == 0) {
-                throw new \Exception(trans('repository::criteria.fields_not_accepted', ['field' => implode(',', $searchFields)]));
+                return [];
             }
         }
         return $fields;
