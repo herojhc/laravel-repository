@@ -101,42 +101,26 @@ class Search extends Criteria
         if (isset($orderBy) && !empty($orderBy)) {
             $table = $model->getModel()->getTable();
             // 查看是否是多条件排序
-            $multiples = explode(';', $orderBy);
-            if (count($multiples) > 1) {
-                // 循环添加排序字段
-                foreach ($multiples as $sort) {
-                    $split = explode('|', $sort);
-                    $orderBy = $split[0];
-                    $relation = null;
-                    if (stripos($orderBy, '.')) {
-                        $explode = explode('.', $orderBy);
-                        $orderBy = array_pop($explode);
-                        $relation = implode('.', $explode);
-                    }
-                    $_sortBy = $sortedBy;
-                    if (count($split) == 2) {
-                        $_sortBy = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
-                    }
-                    if (!is_null($relation)) {
-                        $model = $model->orderBy($relation . $orderBy, $_sortBy);
-                    } else {
-                        $model = $model->orderBy($table . $orderBy, $_sortBy);
-                    }
-                }
-            } else {
-
+            $multipleSorts = explode(';', $orderBy);
+            // 循环添加排序字段
+            foreach ($multipleSorts as $sort) {
+                $split = explode('|', $sort);
+                $sortColumn = $split[0];
                 $relation = null;
-                if (stripos($orderBy, '.')) {
-                    $explode = explode('.', $orderBy);
-                    $orderBy = array_pop($explode);
+                if (stripos($sortColumn, '.')) {
+                    $explode = explode('.', $sortColumn);
+                    $sortColumn = array_pop($explode);
                     $relation = implode('.', $explode);
                 }
-                if (!is_null($relation)) {
-                    $model = $model->orderBy($relation . $orderBy, $sortedBy);
-                } else {
-                    $model = $model->orderBy($table . $orderBy, $sortedBy);
+                $sortDirection = $sortedBy;
+                if (count($split) == 2) {
+                    $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
                 }
-
+                if (!is_null($relation)) {
+                    $model = $model->orderBy($relation . '.' . $sortColumn, $sortDirection);
+                } else {
+                    $model = $model->orderBy($table . '.' . $sortColumn, $sortDirection);
+                }
             }
         }
         if (isset($filter) && !empty($filter)) {
