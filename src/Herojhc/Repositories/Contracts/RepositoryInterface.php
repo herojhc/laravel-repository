@@ -2,12 +2,19 @@
 
 namespace Herojhc\Repositories\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * Interface RepositoryInterface
  * @package Herojhc\Repositories\Contracts
  */
 interface RepositoryInterface
 {
+    /**
+     * 获取Model实例
+     * @return Model
+     */
+    public function newInstanceModel();
 
     /**
      * Retrieve data array for populate field select

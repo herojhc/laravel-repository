@@ -13,7 +13,7 @@ use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
 class criteria_class extends Criteria {
 
     /**
-     * @param            $model
+     * @param    Builder|Model $model
      * @param Repository $repository
      *
      * @return mixed

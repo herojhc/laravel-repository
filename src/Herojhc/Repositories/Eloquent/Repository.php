@@ -86,19 +86,26 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      */
     abstract public function model();
 
-
     /**
      * @return Model
      */
-    public function makeModel()
+    public function newInstanceModel()
     {
         $model = $this->app->make($this->model());
 
         if (!$model instanceof Model) {
             throw new RepositoryException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
+        return $model;
+    }
 
-        return $this->model = $model;
+
+    /**
+     * @return Model
+     */
+    public function makeModel()
+    {
+        return $this->model = $this->newInstanceModel();
     }
 
 

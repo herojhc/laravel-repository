@@ -9,10 +9,9 @@
 namespace Herojhc\Repositories\Criteria;
 
 
-use Herojhc\Repositories\Exceptions\RepositoryException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Herojhc\Repositories\Contracts\RepositoryInterface;
+use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Config;
 
@@ -27,11 +26,11 @@ class Search extends Criteria
      * Apply criteria in query repository
      *
      * @param Builder|Model $model
-     * @param RepositoryInterface $repository
+     * @param Repository $repository
      *
      * @return mixed
      */
-    public function apply($model, RepositoryInterface $repository)
+    public function apply($model, Repository $repository)
     {
         $fieldsSearchable = $repository->getFieldsSearchable();
         $search = Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
@@ -42,6 +41,14 @@ class Search extends Criteria
         $with = Input::get(Config::get('repositories.criteria.params.with', 'with'), null);
         $searchJoin = Input::get(Config::get('repositories.criteria.params.searchJoin', 'searchJoin'), null);
         $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc') ? 'asc' : 'desc';
+
+        // 获取表名称
+        if ($model instanceof Builder) {
+            $modelTableName = $model->getModel()->getTable();
+        } else {
+            $modelTableName = $model->getTable();
+        }
+
         if ($search && is_array($fieldsSearchable) && count($fieldsSearchable)) {
             $searchFields = is_array($searchFields) || is_null($searchFields) ? $searchFields : explode(';', $searchFields);
             $fields = $this->parserFieldsSearch($fieldsSearchable, $searchFields);
@@ -49,7 +56,7 @@ class Search extends Criteria
             $searchData = $this->parserSearchData($search);
             $search = $this->parserSearchValue($search);
             $modelForceAndWhere = strtolower($searchJoin) === 'and';
-            $model = $model->where(function ($query) use ($fields, $search, $searchData, $isFirstField, $modelForceAndWhere) {
+            $model = $model->where(function ($query) use ($fields, $search, $searchData, $isFirstField, $modelForceAndWhere, $modelTableName) {
                 /** @var Builder $query */
                 foreach ($fields as $field => $condition) {
                     if (is_numeric($field)) {
@@ -65,7 +72,6 @@ class Search extends Criteria
                             $value = ($condition == "like" || $condition == "ilike") ? "%{$search}%" : $search;
                         }
                     }
-                    $modelTableName = $query->getModel()->getTable();
 
                     // 模型关联
                     $relation = null;
@@ -105,7 +111,6 @@ class Search extends Criteria
             });
         }
         if (isset($orderBy) && !empty($orderBy)) {
-            $table = $model->getModel()->getTable();
             // 查看是否是多条件排序
             $multipleSorts = explode(';', $orderBy);
             // 循环添加排序字段
@@ -113,7 +118,7 @@ class Search extends Criteria
                 $split = explode('|', $sort);
                 $sortColumn = $split[0];
                 if (!stripos($sortColumn, '.')) {
-                    $sortColumn = $table . '.' . $sortColumn;
+                    $sortColumn = $modelTableName . '.' . $sortColumn;
                 }
                 $sortDirection = $sortedBy;
                 if (count($split) == 2) {
