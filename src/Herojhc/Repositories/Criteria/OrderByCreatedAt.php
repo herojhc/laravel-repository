@@ -8,9 +8,6 @@
 
 namespace Herojhc\Repositories\Criteria;
 
-
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
 use Illuminate\Support\Facades\Input;
 
@@ -30,7 +27,7 @@ class OrderByCreatedAt extends Criteria
     }
 
     /**
-     * @param    Builder|Model $model
+     * @param    \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model $model
      * @param Repository $repository
      *
      * @return mixed
@@ -40,7 +37,7 @@ class OrderByCreatedAt extends Criteria
         $orderBy = Input::get('orderBy', null);
         if ($orderBy && !stripos($orderBy, 'created_at')) {
 
-            if ($model instanceof Model) {
+            if ($model instanceof \Illuminate\Database\Eloquent\Model) {
                 return $model->orderBy($model->qualifyColumn('created_at'), $this->sortedBy);
             } else {
                 return $model->orderBy($model->getModel()->qualifyColumn('created_at'), $this->sortedBy);
