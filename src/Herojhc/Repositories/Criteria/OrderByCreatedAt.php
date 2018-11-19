@@ -35,7 +35,7 @@ class OrderByCreatedAt extends Criteria
     public function apply($model, Repository $repository)
     {
         $orderBy = Input::get('orderBy', null);
-        if ($orderBy && !stripos($orderBy, 'created_at')) {
+        if (!$orderBy || stripos($orderBy, "created_at") === false) {
 
             if ($model instanceof \Illuminate\Database\Eloquent\Model) {
                 return $model->orderBy($model->qualifyColumn('created_at'), $this->sortedBy);

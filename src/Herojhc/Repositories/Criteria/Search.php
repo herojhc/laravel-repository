@@ -75,12 +75,12 @@ class Search extends Criteria
 
                     // 模型关联
                     $relation = null;
-                    if (stripos($field, '|')) {
-                        $explode = explode('.', $field);
+                    if (stripos($field, '|') !== false) {
+                        $explode = explode('|', $field);
                         // 删除数组的最后一个值并返回删除的值
                         $field = array_pop($explode);
                         $relation = implode('.', $explode);
-                    } elseif (!stripos($field, '.')) {
+                    } elseif (stripos($field, '.') === false) {
                         $field = $modelTableName . '.' . $field;
                     }
 
@@ -117,7 +117,7 @@ class Search extends Criteria
             foreach ($multipleSorts as $sort) {
                 $split = explode('|', $sort);
                 $sortColumn = $split[0];
-                if (!stripos($sortColumn, '.')) {
+                if (stripos($sortColumn, '.') === false) {
                     $sortColumn = $modelTableName . '.' . $sortColumn;
                 }
                 $sortDirection = $sortedBy;
