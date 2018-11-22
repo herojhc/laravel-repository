@@ -40,10 +40,15 @@ class Keyword extends Criteria
     {
         $search = Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
         $searchFields = Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null);
-        $orderBy = Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), $this->orderBy);
-        $sortedBy = Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), $this->sortedBy);
+        $orderBy = Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), null);
+        $sortedBy = Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), null);
 
-
+        if (empty($orderBy)) {
+            $orderBy = $this->orderBy;
+        }
+        if (empty($sortedBy)) {
+            $sortedBy = $this->sortedBy;
+        }
         // 获取表名称
         if ($model instanceof Builder) {
             $modelTableName = $model->getModel()->getTable();
@@ -51,6 +56,7 @@ class Keyword extends Criteria
             $modelTableName = $model->getTable();
         }
         if (isset($orderBy) && !empty($orderBy)) {
+
             $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc') ? 'asc' : 'desc';
             // 查看是否是多条件排序
             $multipleSorts = explode(';', $orderBy);
