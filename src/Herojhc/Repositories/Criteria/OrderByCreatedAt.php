@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\Input;
 class OrderByCreatedAt extends Criteria
 {
 
-    protected $sortedBy = 'desc';
+    protected $orderBy;
+    protected $sortedBy;
 
-    public function __construct($sortedBy = 'desc')
+    public function __construct($orderBy = null, $sortedBy = null)
     {
+        $this->orderBy = $orderBy;
         $this->sortedBy = $sortedBy;
     }
 
@@ -34,8 +36,7 @@ class OrderByCreatedAt extends Criteria
      */
     public function apply($model, Repository $repository)
     {
-        $orderBy = Input::get('orderBy', null);
-        if (!$orderBy || stripos($orderBy, "created_at") === false) {
+        if (!$this->orderBy && stripos($this->orderBy, "created_at") !== false) {
 
             if ($model instanceof \Illuminate\Database\Eloquent\Model) {
                 return $model->orderBy($model->qualifyColumn('created_at'), $this->sortedBy);
@@ -45,5 +46,11 @@ class OrderByCreatedAt extends Criteria
         }
         return $model;
 
+    }
+
+    public function getCriteria()
+    {
+        $this->orderBy = $this->orderBy ?? Input::get('orderBy', null);
+        $this->sortedBy = $this->sortedBy ?? Input::get('sortedBy', 'desc');
     }
 }

@@ -22,6 +22,25 @@ use Illuminate\Support\Facades\Config;
 class Search extends Criteria
 {
 
+    protected $search;
+    protected $searchFields;
+    protected $filter;
+    protected $orderBy;
+    protected $sortedBy;
+    protected $with;
+    protected $searchJoin;
+
+    public function __construct($criteria = [])
+    {
+        $this->search = $criteria['search'] ?? null;
+        $this->searchFields = $criteria['searchFields'] ?? null;
+        $this->filter = $criteria['filter'] ?? null;
+        $this->orderBy = $criteria['orderBy'] ?? null;
+        $this->sortedBy = $criteria['sortedBy'] ?? null;
+        $this->with = $criteria['with'] ?? null;
+        $this->searchJoin = $criteria['searchJoin'] ?? null;
+    }
+
     /**
      * Apply criteria in query repository
      *
@@ -33,13 +52,13 @@ class Search extends Criteria
     public function apply($model, Repository $repository)
     {
         $fieldsSearchable = $repository->getFieldsSearchable();
-        $search = Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
-        $searchFields = Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null);
-        $filter = Input::get(Config::get('repositories.criteria.params.filter', 'filter'), null);
-        $orderBy = Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), null);
-        $sortedBy = Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc');
-        $with = Input::get(Config::get('repositories.criteria.params.with', 'with'), null);
-        $searchJoin = Input::get(Config::get('repositories.criteria.params.searchJoin', 'searchJoin'), null);
+        list($search,
+            $searchFields,
+            $filter,
+            $orderBy,
+            $sortedBy,
+            $with,
+            $searchJoin) = $this->getCriteria();
         $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc') ? 'asc' : 'desc';
 
         // 获取表名称
@@ -224,5 +243,19 @@ class Search extends Criteria
             }
         }
         return $fields;
+    }
+
+    protected function getCriteria()
+    {
+        return [
+            $this->search ?? Input::get(Config::get('repositories.criteria.params.search', 'search'), null),
+            $this->searchFields ?? Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null),
+            $this->filter ?? Input::get(Config::get('repositories.criteria.params.filter', 'filter'), null),
+            $this->orderBy ?? Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), null),
+            $this->sortedBy ?? Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc'),
+            $this->with ?? Input::get(Config::get('repositories.criteria.params.with', 'with'), null),
+            $this->searchJoin ?? Input::get(Config::get('repositories.criteria.params.searchJoin', 'searchJoin'), null)
+        ];
+
     }
 }

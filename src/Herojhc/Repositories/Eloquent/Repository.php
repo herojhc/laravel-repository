@@ -725,12 +725,6 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
         return $this;
     }
 
-    public function withCriteria()
-    {
-        $this->applyCriteria();
-        $this->resetCriteria();
-    }
-
     /**
      * Apply criteria in current Query
      *
