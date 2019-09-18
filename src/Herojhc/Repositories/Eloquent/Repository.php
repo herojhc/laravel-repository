@@ -2,8 +2,7 @@
 
 namespace Herojhc\Repositories\Eloquent;
 
-use Closure;
-use Illuminate\Container\Container as Application;
+use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -18,11 +17,6 @@ use Herojhc\Repositories\Exceptions\RepositoryException;
  */
 abstract class Repository implements RepositoryInterface, CriteriaInterface
 {
-
-    /**
-     * @var Application
-     */
-    protected $app;
 
     /**
      * @var Model
@@ -51,13 +45,8 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      */
     protected $scopeQuery = null;
 
-    /**
-     * BaseRepository constructor.
-     * @param Application $app
-     */
-    public function __construct(Application $app)
+    public function __construct()
     {
-        $this->app = $app;
         $this->criteria = new Collection();
         $this->makeModel();
         $this->boot();
@@ -91,7 +80,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      */
     public function newInstanceModel()
     {
-        $model = $this->app->make($this->model());
+        $model = Container::getInstance()->make($this->model());
 
         if (!$model instanceof Model) {
             throw new RepositoryException("Class {$this->model()} must be an instance of Illuminate\\Database\\Eloquent\\Model");
@@ -568,7 +557,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
      * Load relation with closure
      *
      * @param string $relation
-     * @param closure $closure
+     * @param \Closure $closure
      *
      * @return $this
      */

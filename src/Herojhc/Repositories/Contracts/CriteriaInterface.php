@@ -56,7 +56,7 @@ interface CriteriaInterface
     public function skipCriteria($status = true);
 
     /**
-     * Reset all Criterias
+     * Reset all Criteria
      *
      * @return $this
      */
