@@ -687,7 +687,7 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
     }
 
     /**
-     * Reset all Criterias
+     * Reset all Criteria
      *
      * @return $this
      */
@@ -723,6 +723,12 @@ abstract class Repository implements RepositoryInterface, CriteriaInterface
         }
 
         return $this;
+    }
+
+    public function withCriteria()
+    {
+        $this->applyCriteria();
+        $this->resetCriteria();
     }
 
     /**
