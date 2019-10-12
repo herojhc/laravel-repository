@@ -89,6 +89,6 @@ class Keyword extends Criteria
         $this->search = $this->search ?? Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
         $this->searchFields = $this->searchFields ?? Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null);
         $this->orderBy = $this->orderBy ?? Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), 'created_at');
-        $this->sortedBy = $this->sortedBy ?? Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), null);
+        $this->sortedBy = $this->sortedBy ?? Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'desc');
     }
 }
