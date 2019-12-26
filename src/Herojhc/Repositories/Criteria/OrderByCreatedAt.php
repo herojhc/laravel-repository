@@ -37,11 +37,11 @@ class OrderByCreatedAt extends Criteria
     public function apply($model, Repository $repository)
     {
         if (!$this->orderBy && stripos($this->orderBy, "created_at") !== false) {
-
+            $sortedBy = ($this->sortedBy == 'ascending' || $this->sortedBy == 'asc' || $this->sortedBy == 'ascend') ? 'asc' : 'desc';
             if ($model instanceof \Illuminate\Database\Eloquent\Model) {
-                return $model->orderBy($model->qualifyColumn('created_at'), $this->sortedBy);
+                return $model->orderBy($model->qualifyColumn('created_at'), $sortedBy);
             } else {
-                return $model->orderBy($model->getModel()->qualifyColumn('created_at'), $this->sortedBy);
+                return $model->orderBy($model->getModel()->qualifyColumn('created_at'), $sortedBy);
             }
         }
         return $model;

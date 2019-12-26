@@ -52,7 +52,7 @@ class Keyword extends Criteria
         }
         if (!empty($this->orderBy)) {
 
-            $sortedBy = ($this->sortedBy == 'ascending' || $this->sortedBy == 'asc') ? 'asc' : 'desc';
+            $sortedBy = ($this->sortedBy == 'ascending' || $this->sortedBy == 'asc' || $this->sortedBy == 'ascend') ? 'asc' : 'desc';
             // 查看是否是多条件排序
             $multipleSorts = explode(';', $this->orderBy);
             // 循环添加排序字段
@@ -64,7 +64,7 @@ class Keyword extends Criteria
                 }
                 $sortDirection = $sortedBy;
                 if (count($split) == 2) {
-                    $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
+                    $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc' || $split[1] == 'ascend') ? 'asc' : 'desc';
                 }
                 $model = $model->orderBy($sortColumn, $sortDirection);
             }

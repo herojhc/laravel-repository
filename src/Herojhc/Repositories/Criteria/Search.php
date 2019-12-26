@@ -59,7 +59,7 @@ class Search extends Criteria
             $sortedBy,
             $with,
             $searchJoin) = $this->getCriteria();
-        $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc') ? 'asc' : 'desc';
+        $sortedBy = ($sortedBy == 'ascending' || $sortedBy == 'asc' || $sortedBy == 'ascend') ? 'asc' : 'desc';
 
         // 获取表名称
         if ($model instanceof Builder) {
@@ -141,7 +141,7 @@ class Search extends Criteria
                 }
                 $sortDirection = $sortedBy;
                 if (count($split) == 2) {
-                    $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc') ? 'asc' : 'desc';
+                    $sortDirection = ($split[1] == 'ascending' || $split[1] == 'asc' || $split[1] == 'ascend') ? 'asc' : 'desc';
                 }
                 $model = $model->orderBy($sortColumn, $sortDirection);
             }
