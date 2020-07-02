@@ -12,8 +12,6 @@ namespace Herojhc\Repositories\Criteria;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Str;
 
 class Keyword extends Criteria
@@ -86,9 +84,9 @@ class Keyword extends Criteria
 
     protected function getCriteria()
     {
-        $this->search = $this->search ?? Input::get(Config::get('repositories.criteria.params.search', 'search'), null);
-        $this->searchFields = $this->searchFields ?? Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null);
-        $this->orderBy = $this->orderBy ?? Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), 'created_at');
-        $this->sortedBy = $this->sortedBy ?? Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'desc');
+        $this->search = $this->search ?? request(config('repositories.criteria.params.search', 'search'), null);
+        $this->searchFields = $this->searchFields ?? request(config('repositories.criteria.params.searchFields', 'searchFields'), null);
+        $this->orderBy = $this->orderBy ?? request(config('repositories.criteria.params.orderBy', 'orderBy'), 'created_at');
+        $this->sortedBy = $this->sortedBy ?? request(config('repositories.criteria.params.sortedBy', 'sortedBy'), 'desc');
     }
 }

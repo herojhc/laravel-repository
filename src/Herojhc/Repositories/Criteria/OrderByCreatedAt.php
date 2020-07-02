@@ -9,7 +9,6 @@
 namespace Herojhc\Repositories\Criteria;
 
 use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
-use Illuminate\Support\Facades\Input;
 
 /**
  * Class NoAdmin
@@ -50,7 +49,7 @@ class OrderByCreatedAt extends Criteria
 
     public function getCriteria()
     {
-        $this->orderBy = $this->orderBy ?? Input::get('orderBy', null);
-        $this->sortedBy = $this->sortedBy ?? Input::get('sortedBy', 'desc');
+        $this->orderBy = $this->orderBy ?? request('orderBy', null);
+        $this->sortedBy = $this->sortedBy ?? request('sortedBy', 'desc');
     }
 }

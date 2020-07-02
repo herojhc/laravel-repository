@@ -12,8 +12,6 @@ namespace Herojhc\Repositories\Criteria;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Herojhc\Repositories\Contracts\RepositoryInterface as Repository;
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Config;
 
 /**
  * Class RequestCriteria
@@ -209,7 +207,7 @@ class Search extends Criteria
     protected function parserFieldsSearch(array $fields = [], array $searchFields = null)
     {
         if (!is_null($searchFields) && count($searchFields)) {
-            $acceptedConditions = Config::get('repositories.criteria.acceptedConditions', [
+            $acceptedConditions = config('repositories.criteria.acceptedConditions', [
                 '=',
                 'like'
             ]);
@@ -248,13 +246,13 @@ class Search extends Criteria
     protected function getCriteria()
     {
         return [
-            $this->search ?? Input::get(Config::get('repositories.criteria.params.search', 'search'), null),
-            $this->searchFields ?? Input::get(Config::get('repositories.criteria.params.searchFields', 'searchFields'), null),
-            $this->filter ?? Input::get(Config::get('repositories.criteria.params.filter', 'filter'), null),
-            $this->orderBy ?? Input::get(Config::get('repositories.criteria.params.orderBy', 'orderBy'), null),
-            $this->sortedBy ?? Input::get(Config::get('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc'),
-            $this->with ?? Input::get(Config::get('repositories.criteria.params.with', 'with'), null),
-            $this->searchJoin ?? Input::get(Config::get('repositories.criteria.params.searchJoin', 'searchJoin'), null)
+            $this->search ?? request(config('repositories.criteria.params.search', 'search'), null),
+            $this->searchFields ?? request(config('repositories.criteria.params.searchFields', 'searchFields'), null),
+            $this->filter ?? request(config('repositories.criteria.params.filter', 'filter'), null),
+            $this->orderBy ?? request(config('repositories.criteria.params.orderBy', 'orderBy'), null),
+            $this->sortedBy ?? request(config('repositories.criteria.params.sortedBy', 'sortedBy'), 'asc'),
+            $this->with ?? request(config('repositories.criteria.params.with', 'with'), null),
+            $this->searchJoin ?? request(config('repositories.criteria.params.searchJoin', 'searchJoin'), null)
         ];
 
     }
